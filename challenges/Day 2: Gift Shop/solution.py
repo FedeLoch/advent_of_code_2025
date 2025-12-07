@@ -9,10 +9,10 @@ for _range in open(input_path).readlines()[0][:-1].split(','):
 
 for base_len in range(1, (max_len // 2) + 1):
 
-    start = 10**(base_len - 1)
+    start = 10 ** (base_len - 1)
     if base_len == 1: start = 1
     
-    for d in range(start, (10**base_len - 1) + 1):
+    for d in range(start, (10 ** base_len - 1) + 1):
         # generated invalid
         for k in range(2, max_len + 1):
             is_in_range = False

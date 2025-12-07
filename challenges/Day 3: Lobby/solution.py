@@ -1,11 +1,12 @@
 input_path = 'challenges/Day 3: Lobby/input'
 
+part_1, part_2 = 0, 0
+
 def max_pair(s):
     best = 0
     for i in range(len(s) - 1):
-        left = s[i]
         right = max(s[i+1:])
-        best = max(best, int(left + right))
+        best = max(best, int(s[i] + right))
     return best
 
 def max_k_digits(bank, n):
@@ -13,13 +14,11 @@ def max_k_digits(bank, n):
 
     for battery in bank:
         while initial > 0 and stack and stack[-1] < battery:
-          stack.pop()
-          initial -= 1
+          stack.pop(); initial -= 1
         stack.append(battery)
 
-    return int("".join(stack[:k]))
+    return int("".join(stack[:n]))
 
-part_1, part_2 = 0, 0
 with open(input_path) as f:
   for line in f:
     part_1 += max_pair(line[:-1])
