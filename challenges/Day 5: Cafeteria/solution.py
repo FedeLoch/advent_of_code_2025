@@ -29,3 +29,4 @@ is_in = lambda id, ranges: any(low <= id <= high for low, high in ranges)
 count_valid_ids = lambda ranges, ids: reduce(lambda acc, id: acc + (1 if is_in(int(id), ranges) else 0), ids, 0)
 
 print('Part 1:', count_valid_ids(range_lines, ids))
+print('Part 2:', reduce(lambda acc, range: acc + (range[1] - range[0] + 1), range_lines, 0))
