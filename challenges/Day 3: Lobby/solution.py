@@ -9,7 +9,7 @@ def max_pair(s):
         best = max(best, int(s[i] + right))
     return best
 
-def max_k_digits(bank, n):
+def max_n_digits(bank, n):
     stack, initial = [], len(bank) - n
 
     for battery in bank:
@@ -22,7 +22,7 @@ def max_k_digits(bank, n):
 with open(input_path) as f:
   for line in f:
     part_1 += max_pair(line[:-1])
-    part_2 += max_k_digits(line[:-1], 12)
+    part_2 += max_n_digits(line[:-1], 12)
 
 print('Part 1:', part_1)
 print('Part 2:', part_2)
