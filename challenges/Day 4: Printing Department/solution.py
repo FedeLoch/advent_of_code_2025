@@ -1,6 +1,5 @@
 input_path = 'challenges/Day 4: Printing Department/input'
 from utils import dict_from_file, DIRS
-from functools import reduce
 
 DIRS_VALUES = DIRS.values()
 grid = dict_from_file(input_path)
