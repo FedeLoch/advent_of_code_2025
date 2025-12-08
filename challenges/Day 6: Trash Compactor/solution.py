@@ -1,17 +1,31 @@
 import re
 
 
-input_path = 'challenges/Day 6: Trash Compactor/input0'
+input_path = 'challenges/Day 6: Trash Compactor/input'
 
 operations = { '*': lambda x, y: x * y, '+': lambda x, y: x + y }
 numbers, string_numbers, ops = [], [], []
+
+with open(input_path, "r") as f: operators = f.readlines()[-1]
+
+def my_split(s, operators):
+  last, indexes, result = 0, [], []
+  for i in range(len(operators)):
+    if operators[i] in operations.keys():
+      indexes.append(i)
+  
+  for index in indexes[1:]:
+    result.append(s[last:index])
+    last = index
+  result.append(s[last:])
+  return result
 
 with open(input_path) as f:
   for line in f:
     _line = line[:-1].replace('  ', ' ').split()
     if _line[0] in operations.keys(): ops = _line
     else:
-      string_numbers.append([line[:-1][i:i+3] for i in range(0, len(line[:-1]), n)])
+      string_numbers.append(my_split(line[:-1], operators))
       numbers.append(list(map(int, _line)))
 
 def part_1(numbers, ops):
@@ -25,11 +39,10 @@ def part_1(numbers, ops):
   return result
 
 def read_cephalopod_column(matrix, i):
-    col = [row[i] for row in matrix]
-    res = []
+    col, res = [row[i] for row in matrix], []
     for i in reversed(range(len(col[0]))):
       s = ''.join(list(map(lambda e: e[i], col))).strip()
-      res.append(int(s))
+      if s != '': res.append(int(s))
     return res
 
 def part_2(numbers, ops):
