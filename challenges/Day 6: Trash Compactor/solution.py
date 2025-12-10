@@ -1,6 +1,3 @@
-import re
-
-
 input_path = 'challenges/Day 6: Trash Compactor/input'
 
 operations = { '*': lambda x, y: x * y, '+': lambda x, y: x + y }
