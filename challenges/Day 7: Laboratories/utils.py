@@ -11,7 +11,3 @@ def dict_from_file(input_path):
       row +=1
 
   return array
-
-def print_graph(graph):
-    for row in graph:
-        print(''.join(row))
