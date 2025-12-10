@@ -14,11 +14,8 @@ def calculate_times(graph, origin):
     while queue:
         r, c = queue.pop(0)
         if is_valid((r + 1, c), graph):
-            if graph[r + 1][c] == '^':
-                result += 1; queue.append((r + 1, c - 1)); queue.append((r + 1, c + 1))
-            if graph[r + 1][c] == '.':
-                graph[r + 1][c] = '|'
-                queue.append((r + 1, c))
+            if graph[r + 1][c] == '^': result += 1; queue.append((r + 1, c - 1)); queue.append((r + 1, c + 1))
+            if graph[r + 1][c] == '.': graph[r + 1][c] = '|'; queue.append((r + 1, c))
 
     return result
 
