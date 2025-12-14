@@ -32,4 +32,4 @@ def connect(times):
     return map(lambda c: len(c), reversed(circuits))
 
 print('Part 1: ', reduce(mul, list(connect(1000))[0:3]))
-print('Part 2:', list(connect(100000)))
+print('Part 2: ', list(connect(100000)))
