@@ -18,16 +18,18 @@ with open(input_path) as f:
 
 def connect(times):
     circuits = set()
-    for _ in range(times):
+    for i in range(times):
         _, _, box1, box2 = distances.get()
         if box1.isConnected(box2): continue
         circuits.discard(box1.circuit)
         circuits.discard(box2.circuit)
-        circuits.add(box1.connect(box2))
+        circuit = box1.connect(box2)
+        circuits.add(circuit)
+        # Part 2
+        if len(circuits) == 1 and len(circuit) == len(boxes): return box1.x * box2.x, i
 
     circuits = sorted(circuits, key=lambda c: len(c))
     return map(lambda c: len(c), reversed(circuits))
 
-connected = list(connect(1000))
-print('Connected:', connected)
-print('Part 1: ', reduce(mul, connected[0:3]))
+print('Part 1: ', reduce(mul, list(connect(1000))[0:3]))
+print('Part 2:', list(connect(100000)))
