@@ -1,4 +1,4 @@
-input_path = 'challenges/Day 9: Movie Theater/input'
+input_path = 'challenges/Day 9: Movie Theater/input0'
 from utils import valid_tiles, is_valid_rectangle
 
 points = set()

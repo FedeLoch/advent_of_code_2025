@@ -1,16 +1,16 @@
 from collections import deque
 
+def is_in(point, valid_lines):
+    if point[0] not in valid_lines: return False
+    return point[1] >= valid_lines[point[0]][0] and point[1] <= valid_lines[point[0]][1]
+
 def is_valid_rectangle(p1, p2, valid_lines):
     xmin, xmax = sorted([p1[0], p2[0]])
     ymin, ymax = sorted([p1[1], p2[1]])
 
-    for x in range(xmin, xmax + 1):
-        if x not in valid_lines: return False
-        _min, _max = valid_lines[x]
-        for y in range(ymin, ymax + 1):
-            if y < _min or y > _max: return False
-
-    return True
+    return (is_in((xmin, ymin), valid_lines) and is_in((xmin, ymax), valid_lines) and
+        is_in((xmax, ymin), valid_lines) and is_in((xmax, ymax), valid_lines)
+    )
 
 horizotal_points = lambda p1, p2: [ (p1[0], y) for y in range(min(p1[1], p2[1]) + 1, max(p1[1], p2[1])) ]
 vertical_points = lambda p1, p2: [ (x, p1[1]) for x in range(min(p1[0], p2[0]) + 1, max(p1[0], p2[0])) ]
@@ -32,17 +32,6 @@ def build_border(points):
                 queue.append(point)
     return border
 
-def print_graph(graph):
-    for row in graph:
-        print(''.join(row))
-
-def add_points_to_graph(points, red_points, filled, graph):
-    for x, y in points: graph[y][x] = 'X'
-    for x, y in filled: graph[y][x] = 'X'
-    for x, y in red_points: graph[y][x] = '#'
-
-    return graph
-
 def border_lines(border):
     _dict = {}
     for x, y in border:
@@ -50,6 +39,4 @@ def border_lines(border):
         _dict[x] = (min(_dict[x][0], y), max(_dict[x][1], y))
     return _dict
 
-def valid_tiles(red_points):
-    border = build_border(red_points)
-    return border_lines(border) # { row -> (min, max) columns }
+valid_tiles = lambda red_points: border_lines(build_border(red_points))
