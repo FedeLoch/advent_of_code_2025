@@ -1,17 +1,20 @@
-from functools import reduce
+from collections import deque
 
-def dp(current, memo, machine):
-    if not any(current): return 0
-    key = machine.key(current)
+def bfs(current, memo, machine):
+    # Using bfs to find minimum button presses
+    queue = deque([(current, 0)])
+    visited = set([machine.key(current)])
 
-    if key not in memo:
-        _min = float('inf')
-        memo[key] = _min
+    while queue:
+        state, steps = queue.popleft()
+        if not any(state): return steps
+
         for button in machine.buttons:
-            _min = min(_min, dp(machine.apply(current, button), memo, machine))
-        memo[key] = _min + 1
+            next_state = machine.apply(state, button)
+            next_key = machine.key(next_state)
+            if next_key not in visited: visited.add(next_key); queue.append((next_state, steps + 1))
 
-    return memo[key]
+    return float('inf')
 
 class Machine(object):
     def __init__(self, goal, buttons, costs):
@@ -25,4 +28,4 @@ class Machine(object):
         return result
     
     def fewest_required_buttons(self):
-        return dp(self.goal, {}, self)
+        return bfs(self.goal, {}, self)
