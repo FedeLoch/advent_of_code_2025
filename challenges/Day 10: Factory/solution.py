@@ -1,7 +1,6 @@
 input_path = 'challenges/Day 10: Factory/input0'
 from utils import Machine
 
-# A *
 part_1, part_2 = 0, 0
 with open(input_path) as f:
   for line in f:
