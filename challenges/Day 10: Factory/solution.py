@@ -10,5 +10,7 @@ with open(input_path) as f:
     costs = list(map(int, splitted[-1][1:-1].split(',')))
     machine = Machine(goal, buttons, costs)
     part_1 += machine.fewest_required_buttons()
+    part_2 += machine.fewest_required_joltage_buttons()
 
 print('Part 1: ', part_1)
+print('Part 2:', part_2)

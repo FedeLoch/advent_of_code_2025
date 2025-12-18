@@ -17,8 +17,8 @@ def bfs(current, memo, machine):
     return float('inf')
 
 class Machine(object):
-    def __init__(self, goal, buttons, costs):
-        self.goal = goal; self.buttons = buttons; self.costs = costs
+    def __init__(self, goal, buttons, joltages):
+        self.goal = goal; self.buttons = buttons; self.joltages = joltages
 
     def key(self, state): return ''.join(list(map(lambda x: '#' if x else '.', state)))
 
@@ -29,3 +29,6 @@ class Machine(object):
     
     def fewest_required_buttons(self):
         return bfs(self.goal, {}, self)
+    
+    def fewest_required_joltage_buttons(self):
+        None
