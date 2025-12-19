@@ -36,8 +36,7 @@ def bfs_joltage(machine):
             next_key = tuple(state)
             if next_key not in visited:
                 visited.add(next_key)
-                h_new = sum(machine.joltages[i] - state[i] for i in range(len(state)))
-                heapq.heappush(queue, (g + 1 + h_new, g + 1, state.copy()))
+                heapq.heappush(queue, (g + 1 + machine.heuristic_value(state), g + 1, state.copy()))
             # undo
             for pos in button: state[pos] -= 1
 
@@ -45,7 +44,7 @@ def bfs_joltage(machine):
 
 class Machine(object):
     def __init__(self, goal, buttons, joltages):
-        self.goal = goal; self.buttons = buttons; self.joltages = joltages
+        self.goal = goal; self.buttons = tuple(buttons); self.joltages = tuple(joltages)
 
     def key(self, state): return ''.join(list(map(lambda x: '#' if x else '.', state)))
 
@@ -54,8 +53,21 @@ class Machine(object):
         for pos in button: result[pos] = not result[pos]
         return result
     
+    def heuristic_value(self, joltages):
+        res = 0
+        for i in range(len(joltages)): res += self.joltages[i] - joltages[i]
+        return res
+    
+    def can_increase_apply_button_joltage(self, state, button):
+        for pos in button:
+            if state[pos] == self.joltages[pos]: return False
+        return True
+    
     def valid_buttons(self, state):
-        return [button for button in self.buttons if not any(state[pos] + 1 > self.joltages[pos] for pos in button)]
+        res = []
+        for button in self.buttons:
+            if self.can_increase_apply_button_joltage(state, button): res.append(button)
+        return res
     
     def fewest_required_buttons(self): return bfs_lights(self)
     def fewest_required_joltage_buttons(self): return bfs_joltage(self)
