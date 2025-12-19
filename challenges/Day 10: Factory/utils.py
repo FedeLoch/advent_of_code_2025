@@ -32,13 +32,11 @@ def bfs_joltage(machine):
         if all(state[i] == machine.joltages[i] for i in range(len(state))): return g
 
         for button in machine.valid_buttons(state):
-            for pos in button: state[pos] += 1
-            next_key = tuple(state)
-            if next_key not in visited:
-                visited.add(next_key)
-                heapq.heappush(queue, (g + 1 + machine.heuristic_value(state), g + 1, state.copy()))
+            n_state = machine.apply2(state, button)
+            if n_state not in visited:
+                visited.add(n_state)
+                heapq.heappush(queue, (g + 1 + machine.heuristic_value(state), g + 1, n_state))
             # undo
-            for pos in button: state[pos] -= 1
 
     return float('inf')
 
@@ -52,6 +50,9 @@ class Machine(object):
         result = state.copy()
         for pos in button: result[pos] = not result[pos]
         return result
+    
+    def apply2(self, state, button):
+        return tuple([ state[pos] + (1 if pos in button else 0) for pos in range(len(state))])
     
     def heuristic_value(self, joltages):
         res = 0
