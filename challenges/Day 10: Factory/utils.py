@@ -32,7 +32,6 @@ def bfs_joltage(machine):
         if all(state[i] == machine.joltages[i] for i in range(len(state))): return g
 
         for button in machine.valid_buttons(state):
-            # Apply changes in place
             for pos in button: state[pos] += 1
             next_key = tuple(state)
             if next_key not in visited:
