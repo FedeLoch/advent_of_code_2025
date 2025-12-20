@@ -29,14 +29,16 @@ def bfs_joltage(machine):
 
     while queue:
         h, g, state = heapq.heappop(queue)
+        state = list(state)
         if (machine.won(state)): return g
 
         for button in machine.valid_buttons(state):
-            n_state = machine.apply2(state, button)
+            for pos in button: state[pos] += 1
+            n_state = tuple(state)
             if n_state not in visited:
                 visited.add(n_state)
-                heapq.heappush(queue, (g + 1 + machine.heuristic_value(n_state), g + 1, n_state))
-            # undo
+                heapq.heappush(queue, (g + 1 + machine.heuristic_value(state), g + 1, n_state))
+            for pos in button: state[pos] -= 1
 
     return float('inf')
 
@@ -53,7 +55,7 @@ class Machine(object):
     
     def apply2(self, state, button):
         return tuple([ state[pos] + (1 if pos in button else 0) for pos in range(len(state))])
-    
+        
     def heuristic_value(self, joltages):
         res = 0
         for i in range(len(joltages)): res += self.joltages[i] - joltages[i]
