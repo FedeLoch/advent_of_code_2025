@@ -23,13 +23,13 @@ def bfs_lights(machine):
 def bfs_joltage(machine):
     # Using A* to find minimum button presses for joltages
     initial = [0] * len(machine.joltages)
-    h = sum(machine.joltages[i] - initial[i] for i in range(len(initial)))
+    h = machine.heuristic_value(initial)
     queue = [(h, 0, initial)]
     visited = set([tuple(initial)])
 
     while queue:
-        _, g, state = heapq.heappop(queue)
-        if all(state[i] == machine.joltages[i] for i in range(len(state))): return g
+        h, g, state = heapq.heappop(queue)
+        if (machine.won(state)): return g
 
         for button in machine.valid_buttons(state):
             n_state = machine.apply2(state, button)
@@ -58,6 +58,11 @@ class Machine(object):
         res = 0
         for i in range(len(joltages)): res += self.joltages[i] - joltages[i]
         return res
+    
+    def won(self, state):
+        for i in range(len(state)):
+            if state[i] != self.joltages[i]: return False
+        return True
     
     def can_increase_apply_button_joltage(self, state, button):
         for pos in button:

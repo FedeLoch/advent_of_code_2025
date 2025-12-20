@@ -1,4 +1,4 @@
-input_path = 'challenges/Day 10: Factory/test'
+input_path = 'challenges/Day 10: Factory/input'
 from utils import Machine
 
 part_1, part_2 = 0, 0
