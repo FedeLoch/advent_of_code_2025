@@ -32,13 +32,14 @@ def bfs_joltage(machine):
         state = list(state)
         if (machine.won(state)): return g
 
-        for button in machine.valid_buttons(state):
-            for pos in button: state[pos] += 1
-            n_state = tuple(state)
-            if n_state not in visited:
-                visited.add(n_state)
-                heapq.heappush(queue, (g + 1 + machine.heuristic_value(state), g + 1, n_state))
-            for pos in button: state[pos] -= 1
+        for button in machine.buttons:
+            if machine.can_increase_apply_button_joltage(state, button):
+                for pos in button: state[pos] += 1
+                n_state = tuple(state)
+                if n_state not in visited:
+                    visited.add(n_state)
+                    heapq.heappush(queue, (g + 1 + machine.heuristic_value(state), g + 1, n_state))
+                for pos in button: state[pos] -= 1
 
     return float('inf')
 
@@ -70,12 +71,6 @@ class Machine(object):
         for pos in button:
             if state[pos] == self.joltages[pos]: return False
         return True
-    
-    def valid_buttons(self, state):
-        res = []
-        for button in self.buttons:
-            if self.can_increase_apply_button_joltage(state, button): res.append(button)
-        return res
     
     def fewest_required_buttons(self): return bfs_lights(self)
     def fewest_required_joltage_buttons(self): return bfs_joltage(self)
