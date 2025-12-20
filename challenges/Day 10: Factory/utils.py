@@ -35,7 +35,7 @@ def bfs_joltage(machine):
             n_state = machine.apply2(state, button)
             if n_state not in visited:
                 visited.add(n_state)
-                heapq.heappush(queue, (g + 1 + machine.heuristic_value(state), g + 1, n_state))
+                heapq.heappush(queue, (g + 1 + machine.heuristic_value(n_state), g + 1, n_state))
             # undo
 
     return float('inf')
