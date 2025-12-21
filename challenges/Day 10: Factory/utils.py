@@ -25,22 +25,18 @@ def solve_joltage_z3(machine):
     opt = z3.Optimize()
     vars = [z3.Int(f'b_{i}') for i in range(len(machine.buttons))]
     
-    for v in vars:
-        opt.add(v >= 0)
+    for v in vars: opt.add(v >= 0)
     
-    num_counters = len(machine.joltages)
-    
-    for j in range(num_counters):
+    for j in range(len(machine.joltages)):
         expr = z3.Sum([vars[i] for i, button in enumerate(machine.buttons) if j in button])
         opt.add(expr == machine.joltages[j])
         
     opt.minimize(z3.Sum(vars))
     
     if opt.check() == z3.sat:
-        model = opt.model()
-        return sum(model[v].as_long() for v in vars)
-    else:
-        return float('inf')
+        return sum(opt.model()[v].as_long() for v in vars)
+
+    return float('inf')
 
 def a_star_joltage(machine):
     # Using A* to find minimum button presses for joltages
