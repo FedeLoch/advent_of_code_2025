@@ -30,4 +30,4 @@ with open(input_path) as f:
                 
                 regions.append(Region((w, h), requirements))
 
-print('Part 1: ', len(list(filter(lambda region: region.isSatisfiable(shapes), regions))))
+print('Part 1: ', len(list(filter(lambda region: region.is_satisfiable(shapes), regions))))
