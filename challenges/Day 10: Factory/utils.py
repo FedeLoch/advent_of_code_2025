@@ -1,5 +1,6 @@
 from collections import deque
 import heapq
+import z3
 
 def bfs_lights(machine):
     # Using bfs to find minimum button presses for lights
@@ -20,26 +21,44 @@ def bfs_lights(machine):
 
     return float('inf')
 
-def bfs_joltage(machine):
+def solve_joltage_z3(machine):
+    opt = z3.Optimize()
+    vars = [z3.Int(f'b_{i}') for i in range(len(machine.buttons))]
+    
+    for v in vars: opt.add(v >= 0)
+    
+    for j in range(len(machine.joltages)):
+        expr = z3.Sum([vars[i] for i, button in enumerate(machine.buttons) if j in button])
+        opt.add(expr == machine.joltages[j])
+        
+    opt.minimize(z3.Sum(vars))
+    
+    if opt.check() == z3.sat:
+        return sum(opt.model()[v].as_long() for v in vars)
+
+    return float('inf')
+
+def a_star_joltage(machine):
     # Using A* to find minimum button presses for joltages
     initial = [0] * len(machine.joltages)
-    h = sum(machine.joltages[i] - initial[i] for i in range(len(initial)))
+    h = machine.heuristic_value(initial)
     queue = [(h, 0, initial)]
     visited = set([tuple(initial)])
 
     while queue:
-        _, g, state = heapq.heappop(queue)
-        if all(state[i] == machine.joltages[i] for i in range(len(state))): return g
+        h, g, state = heapq.heappop(queue)
+        state = list(state)
+        if (machine.won(state)): return g
 
-        for button in machine.valid_buttons(state):
-            for pos in button: state[pos] += 1
-            next_key = tuple(state)
-            if next_key not in visited:
-                visited.add(next_key)
-                heapq.heappush(queue, (g + 1 + machine.heuristic_value(state), g + 1, state.copy()))
-            # undo
-            for pos in button: state[pos] -= 1
-
+        for button in machine.buttons:
+            if machine.can_increase_apply_button_joltage(state, button):
+                for pos in button: state[pos] += 1
+                n_state = tuple(state)
+                if n_state not in visited:
+                    visited.add(n_state)
+                    heapq.heappush(queue, (g + 1 + machine.heuristic_value(state), g + 1, n_state))
+                for pos in button: state[pos] -= 1
+    
     return float('inf')
 
 class Machine(object):
@@ -53,21 +72,23 @@ class Machine(object):
         for pos in button: result[pos] = not result[pos]
         return result
     
+    def apply2(self, state, button):
+        return tuple([ state[pos] + (1 if pos in button else 0) for pos in range(len(state))])
+        
     def heuristic_value(self, joltages):
         res = 0
         for i in range(len(joltages)): res += self.joltages[i] - joltages[i]
         return res
+    
+    def won(self, state):
+        for i in range(len(state)):
+            if state[i] != self.joltages[i]: return False
+        return True
     
     def can_increase_apply_button_joltage(self, state, button):
         for pos in button:
             if state[pos] == self.joltages[pos]: return False
         return True
     
-    def valid_buttons(self, state):
-        res = []
-        for button in self.buttons:
-            if self.can_increase_apply_button_joltage(state, button): res.append(button)
-        return res
-    
     def fewest_required_buttons(self): return bfs_lights(self)
-    def fewest_required_joltage_buttons(self): return bfs_joltage(self)
+    def fewest_required_joltage_buttons(self): return solve_joltage_z3(self)
