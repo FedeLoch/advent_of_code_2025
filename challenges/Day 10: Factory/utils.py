@@ -1,5 +1,6 @@
 from collections import deque
 import heapq
+import z3
 
 def bfs_lights(machine):
     # Using bfs to find minimum button presses for lights
@@ -20,7 +21,28 @@ def bfs_lights(machine):
 
     return float('inf')
 
-def bfs_joltage(machine):
+def solve_joltage_z3(machine):
+    opt = z3.Optimize()
+    vars = [z3.Int(f'b_{i}') for i in range(len(machine.buttons))]
+    
+    for v in vars:
+        opt.add(v >= 0)
+    
+    num_counters = len(machine.joltages)
+    
+    for j in range(num_counters):
+        expr = z3.Sum([vars[i] for i, button in enumerate(machine.buttons) if j in button])
+        opt.add(expr == machine.joltages[j])
+        
+    opt.minimize(z3.Sum(vars))
+    
+    if opt.check() == z3.sat:
+        model = opt.model()
+        return sum(model[v].as_long() for v in vars)
+    else:
+        return float('inf')
+
+def a_star_joltage(machine):
     # Using A* to find minimum button presses for joltages
     initial = [0] * len(machine.joltages)
     h = machine.heuristic_value(initial)
@@ -40,7 +62,7 @@ def bfs_joltage(machine):
                     visited.add(n_state)
                     heapq.heappush(queue, (g + 1 + machine.heuristic_value(state), g + 1, n_state))
                 for pos in button: state[pos] -= 1
-
+    
     return float('inf')
 
 class Machine(object):
@@ -73,4 +95,4 @@ class Machine(object):
         return True
     
     def fewest_required_buttons(self): return bfs_lights(self)
-    def fewest_required_joltage_buttons(self): return bfs_joltage(self)
+    def fewest_required_joltage_buttons(self): return solve_joltage_z3(self)

@@ -1,4 +1,4 @@
-input_path = 'challenges/Day 10: Factory/test'
+input_path = 'challenges/Day 10: Factory/input'
 from utils import Machine
 
 part_1, part_2 = 0, 0
@@ -11,7 +11,6 @@ with open(input_path) as f:
     machine = Machine(goal, buttons, joltages)
     part_1 += machine.fewest_required_buttons()
     part_2 += machine.fewest_required_joltage_buttons()
-    print('ended:', splitted)
 
 print('Part 1: ', part_1)
 print('Part 2:', part_2)
